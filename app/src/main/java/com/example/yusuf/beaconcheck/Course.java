@@ -1,15 +1,15 @@
 package com.example.yusuf.beaconcheck;
 
 public class Course {
-    private int id;
+    private String id;
     private String courseName;
 
-    public Course(String courseName, int id){
+    public Course(String courseName, String id){
         this.id = id;
         this.courseName = courseName;
     }
 
-    public int getId(){
+    public String getId(){
         return this.id;
     }
 

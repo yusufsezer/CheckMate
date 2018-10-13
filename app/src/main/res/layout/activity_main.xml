@@ -4,7 +4,11 @@
     android:layout_height="fill_parent"
     android:background="#80dfff"
     android:orientation="vertical">
-
+    <TextView
+        android:id="@+id/emailDisplay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="" />
     <TextView
         android:id="@+id/beaconBotTitle"
         android:layout_width="wrap_content"
@@ -12,7 +16,7 @@
         android:layout_gravity="center"
         android:layout_margin="25dp"
         android:text="BeaconBot"
-        android:textSize="30sp" />
+        android:textSize="40sp" />
 
     <Button
         android:id="@+id/joinClassButton"
@@ -20,6 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="25dp"
+        android:onClick="launchJoinCourse"
         android:text="Join a Class" />
 
     <Button
@@ -28,6 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="20dp"
+        android:onClick="launchAddFriends"
         android:text="Add Friends" />
 
     <TextView
@@ -38,7 +44,7 @@
         android:layout_marginTop="25dp"
         android:gravity="center"
         android:text="Your Classes"
-        android:textSize="20sp" />
+        android:textSize="25sp" />
 
     <LinearLayout
         android:id="@+id/classListContainer"
@@ -48,6 +54,23 @@
         android:layout_margin="20dp"
         android:orientation="vertical"></LinearLayout>
 
-    <!-- More GUI components go here  -->
+    <TextView
+        android:id="@+id/yourFriendsLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="25dp"
+        android:gravity="center"
+        android:text="Your Friends"
+        android:textSize="20sp" />
+
+    <LinearLayout
+        android:id="@+id/friendsContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="25dp"
+        android:orientation="vertical">
+    </LinearLayout>
 
 </LinearLayout>

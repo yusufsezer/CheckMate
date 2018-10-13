@@ -1,6 +1,8 @@
 package com.example.yusuf.beaconcheck;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -18,8 +20,11 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         LinearLayout courseLayout = findViewById(R.id.classListContainer);
+        LinearLayout friendsLayout = findViewById(R.id.friendsContainer);
+        TextView friendsTitle = findViewById(R.id.yourFriendsLabel);
+        TextView emailView = findViewById(R.id.emailDisplay);
+        emailView.setText(getEmail());
         Button joinButton = findViewById(R.id.joinClassButton);
-        // joinButton.setOnClickListener(new View.OnClickListener());
         Course[] courseList = getCourseList();
         String[] friendList = getFriendData();
         if(courseList.length == 0){
@@ -31,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
             courseLayout.addView(noCourses);
         }
         else{
-            for(Course course: courseList){
+            for(Course course: courseList) {
                 TextView courseText = new TextView(this);
                 courseText.setText(course.getName());
                 courseText.setLayoutParams(new LinearLayout.LayoutParams(
@@ -40,11 +45,26 @@ public class MainActivity extends AppCompatActivity {
                 courseLayout.addView(courseText);
             }
         }
+
+        if(friendList.length == 0){
+            friendsTitle.setVisibility(View.GONE);
+        }
+        else{
+            for(String friend: friendList) {
+                TextView friendView = new TextView(this);
+                friendView.setText(friend);
+                friendView.setLayoutParams(new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.FILL_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT));
+                friendsLayout.addView(friendView);
+            }
+        }
+        startBluetoothServer();
     }
 
     public Course[] getCourseList(){
         SharedPreferences courses = getApplicationContext().getSharedPreferences("Courses", 0);
-        Map<String, Integer> courseMap = (Map<String, Integer>)courses.getAll();
+        Map<String, String> courseMap = (Map<String, String>)courses.getAll();
         Course[] ret = new Course[courseMap.size()];
         Object[] courseKeys = courseMap.keySet().toArray();
         for(int i = 0; i < courseKeys.length; i++) {
@@ -56,6 +76,32 @@ public class MainActivity extends AppCompatActivity {
     public String[] getFriendData(){
         SharedPreferences friends = getApplicationContext().getSharedPreferences("Friends", 0);
         return Arrays.copyOf(friends.getAll().keySet().toArray(), friends.getAll().keySet().toArray().length, String[].class);
+    }
+
+    public String getEmail(){
+        SharedPreferences email = getApplicationContext().getSharedPreferences("Email", 0);
+        return email.getString("email", "Anonymous (Add your email when joining a class)");
+    }
+
+    public void launchJoinCourse(View view){
+        Intent newCourseIntent = new Intent(this, JoinCourse.class);
+        startActivity(newCourseIntent);
+
+    }
+
+    public void launchAddFriends(View view){
+        Intent addFriendsIntent = new Intent(this, AddFriends.class);
+        startActivity(addFriendsIntent);
+    }
+
+
+    protected void startBluetoothServer(){
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                BLEGattServer.run();
+            }
+        });
+        thread.start();
     }
 
 }
