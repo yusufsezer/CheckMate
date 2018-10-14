@@ -35,6 +35,7 @@ public class HoldLecture extends AppCompatActivity {
         students = new ArrayList<>();
         courseId = courseInfoString.substring(0, 5);
 
+        startBluetoothClient();
     }
 
     public void launchInstructorHome(View view){
@@ -57,6 +58,17 @@ public class HoldLecture extends AppCompatActivity {
         TextView newStudent = new TextView(this);
         newStudent.setText(student);
         studentLayout.addView(newStudent);
+    }
+
+    protected void startBluetoothClient(){
+        Log.d("BLE_Advertising", "ABOUT TO START THREAD");
+        final BLEGattClient bleClient = new BLEGattClient(getApplicationContext());
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                bleClient.run(courseId);
+            }
+        });
+        thread.start();
     }
 
 }

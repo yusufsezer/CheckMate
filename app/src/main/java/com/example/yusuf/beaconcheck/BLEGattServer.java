@@ -43,7 +43,7 @@ public class BLEGattServer {
     public ScanCallback scanCallback = new ScanCallback() {
         @Override
         public void onScanFailed(int errorCode) {
-            Log.d("BLESERVER", "SCAN FAILED WITH ERROR: " + errorCode);
+            Log.d("BLE_SERVER", "SCAN FAILED WITH ERROR: " + errorCode);
         }
 
         @Override
@@ -53,20 +53,20 @@ public class BLEGattServer {
     };
 
     public void run(){
-        Log.d("BLESERVER", "STARTED THREAD");
+        Log.d("BLE_SERVER", "STARTED THREAD");
 
         // Call stopLeScan after 10 Seconds
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d("BLESERVER", "ABOUT TO CALL BACK");
+                Log.d("BLE_SERVER", "ABOUT TO CALL BACK");
                 bluetoothLeScanner.stopScan(scanCallback);
             }
         }, 10000);
 
-        Log.d("BLESERVER", "STARTING SCAN");
+        Log.d("BLE_SERVER", "STARTING SCAN");
         bluetoothLeScanner.startScan(scanCallback);
-        Log.d("BLESERVER", "LE SCAN STARTED");
+        Log.d("BLE_SERVER", "LE SCAN STARTED");
     }
 
 //    public void leScanCallback(){
