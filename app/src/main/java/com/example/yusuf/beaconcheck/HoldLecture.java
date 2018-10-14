@@ -15,7 +15,7 @@ import java.util.HashSet;
 public class HoldLecture extends AppCompatActivity {
     String courseName;
     String courseId;
-    HashSet<String> students;
+    ArrayList<String> students;
     LinearLayout studentLayout;
     Thread thread;
 
@@ -57,9 +57,12 @@ public class HoldLecture extends AppCompatActivity {
     }
 
     public void addStudent(String student){
-        students.add(student);
+        if(!students.contains(student)) {
+            students.add(student);
+        }
         TextView newStudent = new TextView(this);
         newStudent.setText(student);
+        newStudent.setTextSize(30);
         studentLayout.addView(newStudent);
     }
 

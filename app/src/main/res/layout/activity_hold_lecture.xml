@@ -12,7 +12,7 @@
         android:layout_gravity="center"
         android:layout_margin="25dp"
         android:text="Checked In"
-        android:textSize="30sp" />
+        android:textSize="50sp" />
 
     <LinearLayout
         android:id="@+id/checkedInStudentsLayout"

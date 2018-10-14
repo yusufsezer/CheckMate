@@ -19,7 +19,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,7 +32,8 @@
         <activity android:name=".InstructorHome" />
         <activity android:name=".CreateCourse" />
         <activity android:name=".CourseInfo" />
-        <activity android:name=".HoldLecture"></activity>
+        <activity android:name=".HoldLecture"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

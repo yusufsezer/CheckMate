@@ -52,8 +52,10 @@ public class BleClient {
     BluetoothLeScanner bluetoothLeScanner;
     private BluetoothGatt mGatt;
     private String courseId;
+    private ArrayList<String> checkedInNetIds;
 
     public BleClient(Context context, HoldLecture activity, String courseId) {
+        this.checkedInNetIds = new ArrayList<>();
         this.courseId = courseId;
         this.scanning = false;
         this.mInitialized = false;
@@ -197,6 +199,9 @@ public class BleClient {
             return;
         }
         String message = courseId;
+        for(String netId: checkedInNetIds){
+            message += "-" + netId;
+        }
         byte[] messageBytes = new byte[0];
         try {
             messageBytes = message.getBytes("UTF-8");
@@ -257,6 +262,7 @@ public class BleClient {
                 Log.e(TAG, "Unable to convert message bytes to string");
             }
             final String netIdToSend = messageString;
+            checkedInNetIds.add(netIdToSend);
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     activity.addStudent(netIdToSend);
