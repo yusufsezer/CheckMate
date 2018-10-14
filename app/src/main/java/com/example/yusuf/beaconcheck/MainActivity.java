@@ -60,11 +60,11 @@ public class MainActivity extends AppCompatActivity {
                 friendsLayout.addView(friendView);
             }
         }
-        startBluetoothServer();
+        // startBluetoothServer();
     }
 
     public Course[] getCourseList(){
-        SharedPreferences courses = getApplicationContext().getSharedPreferences("Courses", 0);
+        SharedPreferences courses = getApplicationContext().getSharedPreferences("StudentCourses", 0);
         Map<String, String> courseMap = (Map<String, String>)courses.getAll();
         Course[] ret = new Course[courseMap.size()];
         Object[] courseKeys = courseMap.keySet().toArray();
@@ -93,6 +93,11 @@ public class MainActivity extends AppCompatActivity {
     public void launchAddFriends(View view){
         Intent addFriendsIntent = new Intent(this, AddFriends.class);
         startActivity(addFriendsIntent);
+    }
+
+    public void launchInstructorHome(View view){
+        Intent instructorHomeIntent = new Intent(this, InstructorHome.class);
+        startActivity(instructorHomeIntent);
     }
 
 

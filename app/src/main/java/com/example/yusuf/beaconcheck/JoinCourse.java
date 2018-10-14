@@ -30,7 +30,7 @@ public class JoinCourse extends AppCompatActivity {
         if( name == "" || id == ""){
             return;
         }
-        SharedPreferences courses = getApplicationContext().getSharedPreferences("Courses", 0);
+        SharedPreferences courses = getApplicationContext().getSharedPreferences("StudentCourses", 0);
         SharedPreferences.Editor editor = courses.edit();
         editor.putString(name, id);
         editor.commit();

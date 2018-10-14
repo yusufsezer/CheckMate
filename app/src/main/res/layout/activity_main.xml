@@ -4,9 +4,10 @@
     android:layout_height="fill_parent"
     android:background="#80dfff"
     android:orientation="vertical">
+
     <TextView
         android:id="@+id/emailDisplay"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="" />
     <TextView
@@ -71,6 +72,20 @@
         android:layout_gravity="center"
         android:layout_margin="25dp"
         android:orientation="vertical">
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="bottom">
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="launchInstructorHome"
+            android:text="Instructor Mode" />
     </LinearLayout>
 
 </LinearLayout>

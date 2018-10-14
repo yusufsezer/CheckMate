@@ -9,6 +9,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-feature android:name="android.hardware.bluetooth_le" android:required="true"/>
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:allowBackup="true"
@@ -25,7 +27,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".JoinCourse" />
-        <activity android:name=".AddFriends"></activity>
+        <activity android:name=".AddFriends" />
+        <activity android:name=".InstructorHome" />
+        <activity android:name=".CreateCourse" />
+        <activity android:name=".CourseInfo" />
+        <activity android:name=".HoldLecture"></activity>
     </application>
 
 </manifest>
