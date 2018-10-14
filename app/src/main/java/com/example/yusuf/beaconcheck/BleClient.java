@@ -262,7 +262,9 @@ public class BleClient {
                 Log.e(TAG, "Unable to convert message bytes to string");
             }
             final String netIdToSend = messageString;
-            checkedInNetIds.add(netIdToSend);
+            if (!checkedInNetIds.contains(netIdToSend)){
+                checkedInNetIds.add(netIdToSend);
+            }
             activity.runOnUiThread(new Runnable() {
                 public void run() {
                     activity.addStudent(netIdToSend);

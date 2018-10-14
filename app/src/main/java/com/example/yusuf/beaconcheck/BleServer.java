@@ -41,9 +41,11 @@ public class BleServer {
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
     private String[] courseIdList;
+    private String[] friendsList;
     private String netId;
 
-    public BleServer(Context context, String[] courseIdList, String netId){
+    public BleServer(Context context, String[] courseIdList, String netId, String[] friendsList){
+        this.friendsList = friendsList;
         this.context = context;
         this.netId = netId;
         mHandler = new Handler();

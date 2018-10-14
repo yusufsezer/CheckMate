@@ -44,7 +44,7 @@ public class HoldLecture extends AppCompatActivity {
         SharedPreferences instructorCourses = getApplicationContext().getSharedPreferences("InstructorCourses", 0);
         SharedPreferences.Editor editor = instructorCourses.edit();
         String courseInfoString = instructorCourses.getString(courseName, "");
-        String newLectureString = "--10132018";
+        String newLectureString = "--10142018";
         for(String student: students){
             newLectureString += "-" + student;
         }
@@ -57,13 +57,19 @@ public class HoldLecture extends AppCompatActivity {
     }
 
     public void addStudent(String student){
-        if(!students.contains(student)) {
-            students.add(student);
+        boolean contains = false;
+        for(String s: students){
+            if (s.equals(student)){
+                contains = true;
+            }
         }
-        TextView newStudent = new TextView(this);
-        newStudent.setText(student);
-        newStudent.setTextSize(30);
-        studentLayout.addView(newStudent);
+        if(!contains) {
+            students.add(student);
+            TextView newStudent = new TextView(this);
+            newStudent.setText(student);
+            newStudent.setTextSize(30);
+            studentLayout.addView(newStudent);
+        }
     }
 
 

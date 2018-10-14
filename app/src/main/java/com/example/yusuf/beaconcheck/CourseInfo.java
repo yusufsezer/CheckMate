@@ -52,6 +52,9 @@ public class CourseInfo extends AppCompatActivity {
         else{
             for(String date: lectureDates) {
                 Button courseButton = new Button(this);
+                date = date.substring(0, 2) + "/"
+                        + date.substring(2, 4) + "/"
+                        + date.substring(4);
                 courseButton.setText(date);
                 courseButton.setLayoutParams(new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.FILL_PARENT,
@@ -72,6 +75,7 @@ public class CourseInfo extends AppCompatActivity {
                 dates.add(courseInfo.substring(i+2, i+10));
             }
         }
+
         String[] ret = new String[dates.size()];
         dates.toArray(ret);
         return ret;

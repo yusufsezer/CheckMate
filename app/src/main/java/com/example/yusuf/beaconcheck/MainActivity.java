@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void startBluetoothServer(){
         Log.d("BleServer", "ABOUT TO START THREAD");
-        final BleServer bleServer = new BleServer(getApplicationContext(), courseIdList, getEmail());
+        final BleServer bleServer = new BleServer(getApplicationContext(), courseIdList, getEmail(), friendList);
         thread = new Thread(new Runnable() {
             public void run() {
                 bleServer.run();
