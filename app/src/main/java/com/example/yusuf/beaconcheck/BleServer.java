@@ -41,9 +41,11 @@ public class BleServer {
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
     private String[] courseIdList;
+    private String netId;
 
-    public BleServer(Context context, String[] courseIdList){
+    public BleServer(Context context, String[] courseIdList, String netId){
         this.context = context;
+        this.netId = netId;
         mHandler = new Handler();
         mDevices = new ArrayList<>();
         mBluetoothManager = (BluetoothManager) context.getSystemService(BLUETOOTH_SERVICE);
@@ -183,16 +185,22 @@ public class BleServer {
                     value);
             if (characteristic.getUuid().equals(CHARACTERISTIC_ECHO_UUID)) {
                 mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, null);
-                characteristic.setValue(value);
-                String classCode = "";
+                byte[] messageBytes = new byte[0];
                 try {
-                    classCode = new String(value, "UTF-8").substring(0, 5);
+                    messageBytes = netId.getBytes("UTF-8");
+                    characteristic.setValue(messageBytes);
+                } catch (UnsupportedEncodingException e) {
+                    Log.e(TAG, "Failed to convert message string to byte array");
+                }
+                String courseId = "";
+                try {
+                    courseId = new String(value, "UTF-8").substring(0, 5);
                 } catch (UnsupportedEncodingException e) {
                     Log.d(TAG, "Can't decode message. Closing connection with: " + device.getAddress());
                     mGattServer.cancelConnection(device);
                 }
                 // If the user is a member of this class, respond with netId
-                if (classCode.equals(classString)) {
+                if (Arrays.asList(courseIdList).contains(courseId)) {
                     Log.d(TAG, "Sending back: " + Arrays.toString(value));
                     mGattServer.notifyCharacteristicChanged(device, characteristic, false);
                 } else {
