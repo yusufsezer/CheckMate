@@ -89,7 +89,7 @@ public class BleClient {
                 .build();
         filters.add(scanFilter);
         ScanSettings settings = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
+                .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
                 .build();
         scanResults = new HashMap<>();
         scanCallback = new BtleScanCallback(scanResults);

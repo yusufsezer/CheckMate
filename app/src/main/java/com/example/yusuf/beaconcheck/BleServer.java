@@ -122,7 +122,7 @@ public class BleServer {
         AdvertiseSettings settings = new AdvertiseSettings.Builder().setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
                 .setConnectable(true)
                 .setTimeout(0)
-                .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_LOW)
+                .setTxPowerLevel(AdvertiseSettings.ADVERTISE_MODE_BALANCED
                 .build();
 
         ParcelUuid parcelUuid = new ParcelUuid(SERVICE_UUID);
