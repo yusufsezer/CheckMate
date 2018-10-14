@@ -256,7 +256,7 @@ public class BleServer {
         Notification mBuilder = new NotificationCompat.Builder(context, channel.getId())
                 .setSmallIcon(R.drawable.bell)
                 .setContentTitle("You've Checked into Class!")
-                .setContentText(makeString(names))
+                .setContentText(names.length == 0? "" : makeString(names))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT).build();
         NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(channel);
