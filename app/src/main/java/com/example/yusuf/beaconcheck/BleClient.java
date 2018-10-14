@@ -45,14 +45,14 @@ public class BleClient {
     Boolean scanning;
     Boolean mInitialized;
     Context context;
-    Activity activity;
+    HoldLecture activity;
     Handler handler;
     BluetoothAdapter bluetoothAdapter;
     BluetoothManager bluetoothManager;
     BluetoothLeScanner bluetoothLeScanner;
     private BluetoothGatt mGatt;
 
-    public BleClient(Context context, Activity activity) {
+    public BleClient(Context context, HoldLecture activity) {
         this.scanning = false;
         this.mInitialized = false;
         this.context = context;
@@ -120,9 +120,6 @@ public class BleClient {
         for (String deviceAddress : scanResults.keySet()) {
             Log.d(TAG, "Found device: " + deviceAddress + " with UUID: " + scanResults.get(deviceAddress).getUuids());
         }
-
-
-
     }
 
     private boolean hasPermissions() {
@@ -257,6 +254,7 @@ public class BleClient {
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, "Unable to convert message bytes to string");
             }
+            activity.addStudent(messageString);
             Log.d(TAG, "Received message: " + messageString);
         }
 
