@@ -2,11 +2,14 @@ package com.example.yusuf.beaconcheck;
 
 import java.io.IOException;
 
+import android.Manifest;
+import android.app.Activity;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 
 import java.util.ArrayList;
@@ -28,13 +31,15 @@ public class BLEGattServer {
     BluetoothManager bluetoothManager;
     BluetoothAdapter bluetoothAdapter;
     BluetoothLeScanner bluetoothLeScanner;
+    Activity activity;
     Handler mHandler;
 
-    public BLEGattServer(Context context){
+    public BLEGattServer(Context context, Activity act){
         this.context = context;
         this.bluetoothManager = (BluetoothManager) this.context.getSystemService(Context.BLUETOOTH_SERVICE);
         this.bluetoothAdapter = this.bluetoothManager.getAdapter();
         this.bluetoothLeScanner = this.bluetoothAdapter.getBluetoothLeScanner();
+        this.activity = act;
         this.mHandler = new Handler();
     }
 
@@ -53,7 +58,9 @@ public class BLEGattServer {
 
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
-            Log.d("BLE_SERVER", "SCAN SUCCEEDED");
+            BluetoothDevice device = result.getDevice();
+            String deviceAdress = device.getAddress();
+            Log.d("BLE_SERVER", "SCAN FOUND DEVICE WITH ADDRESS: " + deviceAdress + " WITH NAME: " + device.getName());
         }
 
         @Override
@@ -72,7 +79,7 @@ public class BLEGattServer {
                 Log.d("BLE_SERVER", "SCAN STOPPED");
                 bluetoothLeScanner.stopScan(scanCallback);
             }
-        }, 1000000);
+        }, 20000);
 
         List<ScanFilter> filters = new ArrayList<>();
         ScanSettings settings = new ScanSettings.Builder()

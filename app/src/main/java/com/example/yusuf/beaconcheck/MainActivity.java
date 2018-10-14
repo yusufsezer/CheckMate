@@ -1,5 +1,6 @@
 package com.example.yusuf.beaconcheck;
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -60,7 +61,14 @@ public class MainActivity extends AppCompatActivity {
                 friendsLayout.addView(friendView);
             }
         }
-        //startBluetoothServer();
+        if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            Log.d("BLE_SERVER", "LOCATION PERMISSION GRANTED");
+        } else {
+            Log.d("BLE_SERVER", "LOCATION PERMISSION DENIED...REQUESTING PERMISSION");
+            this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
+        }
+
+        startBluetoothServer();
     }
 
     public Course[] getCourseList(){
@@ -103,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void startBluetoothServer(){
         Log.d("BLESERVER", "ABOUT TO START THREAD");
-        final BLEGattServer bleServer = new BLEGattServer(getApplicationContext());
+        final BLEGattServer bleServer = new BLEGattServer(getApplicationContext(), this);
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 bleServer.run();
