@@ -4,8 +4,13 @@ import java.io.IOException;
 
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
 import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.os.Handler;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.LogRecord;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -48,7 +53,12 @@ public class BLEGattServer {
 
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
-            Log.d("BLESERVER", "SCAN SUCCEEDED");
+            Log.d("BLE_SERVER", "SCAN SUCCEEDED");
+        }
+
+        @Override
+        public void onBatchScanResults(List<ScanResult> results) {
+            Log.d("BLE_SERVER", "Back Scan Results came back.");
         }
     };
 
@@ -59,13 +69,19 @@ public class BLEGattServer {
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d("BLE_SERVER", "ABOUT TO CALL BACK");
+                Log.d("BLE_SERVER", "SCAN STOPPED");
                 bluetoothLeScanner.stopScan(scanCallback);
             }
-        }, 10000);
+        }, 1000000);
+
+        List<ScanFilter> filters = new ArrayList<>();
+        ScanSettings settings = new ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
+                .build();
+
 
         Log.d("BLE_SERVER", "STARTING SCAN");
-        bluetoothLeScanner.startScan(scanCallback);
+        bluetoothLeScanner.startScan(filters, settings, scanCallback);
         Log.d("BLE_SERVER", "LE SCAN STARTED");
     }
 
