@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -96,9 +97,11 @@ public class MainActivity extends AppCompatActivity {
 
 
     protected void startBluetoothServer(){
+        Log.d("BLESERVER", "ABOUT TO START THREAD");
+        final BLEGattServer bleServer = new BLEGattServer(getApplicationContext());
         Thread thread = new Thread(new Runnable() {
             public void run() {
-                BLEGattServer.run();
+                bleServer.run();
             }
         });
         thread.start();
