@@ -235,8 +235,13 @@ public class BleServer {
 
     public void pushFriendNotification(String message) {
         Log.d(TAG, message);
-        String[] names = message.substring(6).split("-");
-
+        String[] names;
+        if (message.length() == 5){
+            names = new String[0];
+        }
+        else {
+            names = message.substring(6).split("-");
+        }
         String content = "";
         if (names.length > 0) {
             Log.d(TAG, "Friends found");
