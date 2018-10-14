@@ -16,6 +16,7 @@ public class HoldLecture extends AppCompatActivity {
     String courseId;
     ArrayList<String> students;
     LinearLayout studentLayout;
+    Thread thread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +47,7 @@ public class HoldLecture extends AppCompatActivity {
         for(String student: students){
             newLectureString += "-" + student;
         }
+        thread.interrupt();
         editor.putString(courseName, courseInfoString+newLectureString);
         editor.commit();
         Intent courseInfoIntent = new Intent(this, CourseInfo.class);
@@ -63,7 +65,7 @@ public class HoldLecture extends AppCompatActivity {
     protected void startBluetoothClient(){
         Log.d("BleClient", "ABOUT TO START THREAD");
         final BleClient bleClient = new BleClient(getApplicationContext(), this);
-        Thread thread = new Thread(new Runnable() {
+        thread = new Thread(new Runnable() {
             public void run() {
                 bleClient.run();
             }

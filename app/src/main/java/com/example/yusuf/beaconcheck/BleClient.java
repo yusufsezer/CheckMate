@@ -6,6 +6,8 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothGattService;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
@@ -17,23 +19,31 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.ParcelUuid;
 import android.util.Log;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import static com.example.yusuf.beaconcheck.Constants.SERVICE_UUID;
+import static com.example.yusuf.beaconcheck.Constants.CHARACTERISTIC_ECHO_UUID;
+
+
 
 import android.os.Handler;
+
+import com.example.yusuf.beaconcheck.util.BluetoothUtils;
 
 import static android.content.Context.BLUETOOTH_SERVICE;
 
 public class BleClient {
 
     final String TAG = "BleClient";
-    final UUID SERVICE_UUID = UUID.fromString("7-6-5-4-3");
     Map<String, BluetoothDevice> scanResults;
     BtleScanCallback scanCallback;
     Boolean scanning;
+    Boolean mInitialized;
     Context context;
     Activity activity;
     Handler handler;
@@ -44,6 +54,7 @@ public class BleClient {
 
     public BleClient(Context context, Activity activity) {
         this.scanning = false;
+        this.mInitialized = false;
         this.context = context;
         this.activity = activity;
         this.handler = new Handler();
@@ -179,6 +190,24 @@ public class BleClient {
         }
     }
 
+    private void sendMessage() {
+        BluetoothGattCharacteristic characteristic = BluetoothUtils.findEchoCharacteristic(mGatt);
+        if (characteristic == null) {
+            Log.e(TAG, "Unable to find echo characteristic.");
+            disconnectGattServer();
+            return;
+        }
+        String message = "00000-ysezer";
+        byte[] messageBytes = new byte[0];
+        try {
+            messageBytes = message.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "com.example.yusuf.beaconcheckFailed to convert message string to byte array");
+        }
+        characteristic.setValue(messageBytes);
+        boolean success = mGatt.writeCharacteristic(characteristic);
+    }
+
     private class GattClientCallback extends BluetoothGattCallback {
         @Override
         public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
@@ -199,10 +228,37 @@ public class BleClient {
             if (newState == BluetoothProfile.STATE_CONNECTED) {
                 Log.d(TAG, "Connected to device " + gatt.getDevice().getAddress());
                 gatt.discoverServices();
+
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.d(TAG, "Disconnected from device");
                 disconnectGattServer();
             }
         }
+
+        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            super.onServicesDiscovered(gatt, status);
+            if (status != BluetoothGatt.GATT_SUCCESS) {
+                return;
+            }
+
+            BluetoothGattService service = gatt.getService(SERVICE_UUID);
+            BluetoothGattCharacteristic characteristic = service.getCharacteristic(CHARACTERISTIC_ECHO_UUID);
+            characteristic.setWriteType(BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT);
+            mInitialized = gatt.setCharacteristicNotification(characteristic, true);
+            sendMessage();
+        }
+
+        public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+            super.onCharacteristicChanged(gatt, characteristic);
+            byte[] messageBytes = characteristic.getValue();
+            String messageString = null;
+            try {
+                messageString = new String(messageBytes, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                Log.e(TAG, "Unable to convert message bytes to string");
+            }
+            Log.d(TAG, "Received message: " + messageString);
+        }
+
     }
 }
