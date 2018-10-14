@@ -17,6 +17,7 @@ import android.os.Handler;
 import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.os.ParcelUuid;
 import android.util.Log;
+import static com.example.yusuf.beaconcheck.Constants.CHARACTERISTIC_ECHO_UUID;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,7 @@ public class BleServer {
         BluetoothGattService service = new BluetoothGattService(SERVICE_UUID,
                 BluetoothGattService.SERVICE_TYPE_PRIMARY);
         BluetoothGattCharacteristic writeCharacteristic = new BluetoothGattCharacteristic(
-                CHARACTERISTIC_UUID,
+                CHARACTERISTIC_ECHO_UUID,
                 BluetoothGattCharacteristic.PROPERTY_WRITE,
                 BluetoothGattCharacteristic.PERMISSION_WRITE);
         service.addCharacteristic(writeCharacteristic);
@@ -175,7 +176,7 @@ public class BleServer {
                     responseNeeded,
                     offset,
                     value);
-            if (characteristic.getUuid().equals(CHARACTERISTIC_UUID)) {
+            if (characteristic.getUuid().equals(CHARACTERISTIC_ECHO_UUID)) {
                 mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, null);
                 int length = value.length;
                 byte[] reversed = new byte[length];
@@ -183,8 +184,8 @@ public class BleServer {
                     reversed[i] = value[length - (i + 1)];
                 }
                 characteristic.setValue(reversed);
-                for (BluetoothDevice device : mDevices) {
-                    mGattServer.notifyCharacteristicChanged(device, characteristic, false);
+                for (BluetoothDevice d : mDevices) {
+                    mGattServer.notifyCharacteristicChanged(d, characteristic, false);
                 }
             }
         }

@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.bignerdranch.android.bluetoothtestbed.Constants.CHARACTERISTIC_ECHO_STRING;
-import static com.bignerdranch.android.bluetoothtestbed.Constants.CHARACTERISTIC_TIME_STRING;
-import static com.bignerdranch.android.bluetoothtestbed.Constants.CLIENT_CONFIGURATION_DESCRIPTOR_SHORT_ID;
-import static com.bignerdranch.android.bluetoothtestbed.Constants.SERVICE_STRING;
+import static com.example.yusuf.beaconcheck.Constants.CHARACTERISTIC_ECHO_STRING;
+import static com.example.yusuf.beaconcheck.Constants.CHARACTERISTIC_TIME_STRING;
+import static com.example.yusuf.beaconcheck.Constants.CLIENT_CONFIGURATION_DESCRIPTOR_SHORT_ID;
+import static com.example.yusuf.beaconcheck.Constants.SERVICE_STRING;
 
 public class BluetoothUtils {
 

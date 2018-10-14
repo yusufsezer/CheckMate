@@ -1,4 +1,4 @@
-package com.bignerdranch.android.bluetoothtestbed;
+package com.example.yusuf.beaconcheck;
 
 import java.util.UUID;
 
