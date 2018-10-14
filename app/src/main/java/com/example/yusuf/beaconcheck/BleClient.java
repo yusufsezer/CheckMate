@@ -51,8 +51,10 @@ public class BleClient {
     BluetoothManager bluetoothManager;
     BluetoothLeScanner bluetoothLeScanner;
     private BluetoothGatt mGatt;
+    private String courseId;
 
-    public BleClient(Context context, HoldLecture activity) {
+    public BleClient(Context context, HoldLecture activity, String courseId) {
+        this.courseId = courseId;
         this.scanning = false;
         this.mInitialized = false;
         this.context = context;
@@ -97,7 +99,7 @@ public class BleClient {
                 stopScan();
                 Log.d(TAG, "FOUND " + scanResults.size() + " Devices");
             }
-        }, 10000);
+        }, 1000000);
         scanning = true;
         bluetoothLeScanner.startScan(filters, settings, scanCallback);
     }
@@ -194,7 +196,7 @@ public class BleClient {
             disconnectGattServer();
             return;
         }
-        String message = "00000-ysezer";
+        String message = courseId;
         byte[] messageBytes = new byte[0];
         try {
             messageBytes = message.getBytes("UTF-8");
@@ -254,7 +256,12 @@ public class BleClient {
             } catch (UnsupportedEncodingException e) {
                 Log.e(TAG, "Unable to convert message bytes to string");
             }
-            activity.addStudent(messageString);
+            final String netIdToSend = messageString;
+            activity.runOnUiThread(new Runnable() {
+                public void run() {
+                    activity.addStudent(netIdToSend);
+                }
+            });
             Log.d(TAG, "Received message: " + messageString);
         }
 

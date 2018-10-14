@@ -10,11 +10,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class HoldLecture extends AppCompatActivity {
     String courseName;
     String courseId;
-    ArrayList<String> students;
+    HashSet<String> students;
     LinearLayout studentLayout;
     Thread thread;
 
@@ -64,7 +65,7 @@ public class HoldLecture extends AppCompatActivity {
 
     protected void startBluetoothClient(){
         Log.d("BleClient", "ABOUT TO START THREAD");
-        final BleClient bleClient = new BleClient(getApplicationContext(), this);
+        final BleClient bleClient = new BleClient(getApplicationContext(), this, courseId);
         thread = new Thread(new Runnable() {
             public void run() {
                 bleClient.run();
