@@ -11,11 +11,8 @@ import android.bluetooth.le.AdvertiseCallback;
 import android.bluetooth.le.AdvertiseData;
 import android.bluetooth.le.AdvertiseSettings;
 import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.bluetooth.le.BluetoothLeAdvertiser;
-import android.os.Looper;
 import android.os.ParcelUuid;
 import android.util.Log;
 
@@ -27,6 +24,7 @@ import static android.content.Context.BLUETOOTH_SERVICE;
 
 
 public class BleServer {
+
     private static final String TAG = "BleServer";
     private static final UUID SERVICE_UUID = UUID.fromString("7-6-5-4-3");
     private Handler mHandler;
@@ -46,7 +44,6 @@ public class BleServer {
 
     }
 
-
     public void run(){
         // Check if bluetooth is enabled
         if (mBluetoothAdapter == null || !mBluetoothAdapter.isEnabled()) {
@@ -64,7 +61,6 @@ public class BleServer {
         setupServer();
         startAdvertising();
     }
-
 
     private void setupServer() {
         BluetoothGattService service = new BluetoothGattService(SERVICE_UUID,
@@ -127,6 +123,7 @@ public class BleServer {
         mHandler.post(new Runnable(){
             @Override
             public void run(){
+                Log.d(TAG, "Added device " + device.getAddress());
                 mDevices.add(device);
             }
         });
@@ -149,8 +146,10 @@ public class BleServer {
             Log.d(TAG, "onConnectionStateChange " + device.getAddress() + "\nstatus " + status + "\nnewState " + newState);
 
             if (newState == BluetoothProfile.STATE_CONNECTED) {
+                Log.d(TAG, "Connected to device: " + device.getAddress());
                 addDevice(device);
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                Log.e(TAG, "State disconnected.");
                 removeDevice(device);
             }
         }
