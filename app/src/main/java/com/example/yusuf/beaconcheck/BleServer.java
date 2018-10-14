@@ -2,6 +2,8 @@ package com.example.yusuf.beaconcheck;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothGattServer;
 import android.bluetooth.BluetoothGattServerCallback;
 import android.bluetooth.BluetoothGattService;
@@ -65,6 +67,11 @@ public class BleServer {
     private void setupServer() {
         BluetoothGattService service = new BluetoothGattService(SERVICE_UUID,
                 BluetoothGattService.SERVICE_TYPE_PRIMARY);
+        BluetoothGattCharacteristic writeCharacteristic = new BluetoothGattCharacteristic(
+                CHARACTERISTIC_UUID,
+                BluetoothGattCharacteristic.PROPERTY_WRITE,
+                BluetoothGattCharacteristic.PERMISSION_WRITE);
+        service.addCharacteristic(writeCharacteristic);
         mGattServer.addService(service);
     }
 
@@ -151,6 +158,34 @@ public class BleServer {
             } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
                 Log.e(TAG, "State disconnected.");
                 removeDevice(device);
+            }
+        }
+
+        public void onCharacteristicWriteRequest(BluetoothDevice device,
+                                                 int requestId,
+                                                 BluetoothGattCharacteristic characteristic,
+                                                 boolean preparedWrite,
+                                                 boolean responseNeeded,
+                                                 int offset,
+                                                 byte[] value) {
+            super.onCharacteristicWriteRequest(device,
+                    requestId,
+                    characteristic,
+                    preparedWrite,
+                    responseNeeded,
+                    offset,
+                    value);
+            if (characteristic.getUuid().equals(CHARACTERISTIC_UUID)) {
+                mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, null);
+                int length = value.length;
+                byte[] reversed = new byte[length];
+                for (int i = 0; i < length; i++) {
+                    reversed[i] = value[length - (i + 1)];
+                }
+                characteristic.setValue(reversed);
+                for (BluetoothDevice device : mDevices) {
+                    mGattServer.notifyCharacteristicChanged(device, characteristic, false);
+                }
             }
         }
     }

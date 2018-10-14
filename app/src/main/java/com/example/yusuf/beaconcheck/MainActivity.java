@@ -17,6 +17,8 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
+    Thread thread;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -112,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
     protected void startBluetoothServer(){
         Log.d("BleServer", "ABOUT TO START THREAD");
         final BleServer bleServer = new BleServer(getApplicationContext());
-        Thread thread = new Thread(new Runnable() {
+        thread = new Thread(new Runnable() {
             public void run() {
                 bleServer.run();
             }
