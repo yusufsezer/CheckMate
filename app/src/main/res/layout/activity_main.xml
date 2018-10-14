@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="25dp"
-        android:text="BeaconBot"
+        android:text="CheckMate"
         android:textSize="40sp" />
 
     <Button

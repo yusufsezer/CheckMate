@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         }
 
-        startBluetoothServer();
+        //startBluetoothServer();
     }
 
     public Course[] getCourseList(){
