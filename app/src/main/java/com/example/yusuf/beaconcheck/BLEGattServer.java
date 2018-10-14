@@ -72,24 +72,21 @@ public class BLEGattServer {
     public void run(){
         Log.d("BLE_SERVER", "STARTED THREAD");
 
-        // Call stopLeScan after 10 Seconds
+        List<ScanFilter> filters = new ArrayList<>();
+        ScanSettings settings = new ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
+                .build();
+
+        Log.d("BLE_SERVER", "STARTING SCAN");
+        bluetoothLeScanner.startScan(filters, settings, scanCallback);
+        Log.d("BLE_SERVER", "LE SCAN STARTED");
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 Log.d("BLE_SERVER", "SCAN STOPPED");
                 bluetoothLeScanner.stopScan(scanCallback);
             }
-        }, 20000);
-
-        List<ScanFilter> filters = new ArrayList<>();
-        ScanSettings settings = new ScanSettings.Builder()
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
-                .build();
-
-
-        Log.d("BLE_SERVER", "STARTING SCAN");
-        bluetoothLeScanner.startScan(filters, settings, scanCallback);
-        Log.d("BLE_SERVER", "LE SCAN STARTED");
+        }, 1000000);
     }
 
 //    public void leScanCallback(){
