@@ -4,7 +4,10 @@ import android.Manifest;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanFilter;
@@ -12,11 +15,14 @@ import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.ParcelUuid;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
 import android.os.Handler;
 
 import static android.content.Context.BLUETOOTH_SERVICE;
@@ -24,6 +30,7 @@ import static android.content.Context.BLUETOOTH_SERVICE;
 public class BleClient {
 
     final String TAG = "BleClient";
+    final UUID SERVICE_UUID = UUID.fromString("7-6-5-4-3");
     Map<String, BluetoothDevice> scanResults;
     BtleScanCallback scanCallback;
     Boolean scanning;
@@ -33,6 +40,7 @@ public class BleClient {
     BluetoothAdapter bluetoothAdapter;
     BluetoothManager bluetoothManager;
     BluetoothLeScanner bluetoothLeScanner;
+    private BluetoothGatt mGatt;
 
     public BleClient(Context context, Activity activity) {
         this.scanning = false;
@@ -61,23 +69,26 @@ public class BleClient {
         }
 
         List<ScanFilter> filters = new ArrayList<>();
+        ScanFilter scanFilter = new ScanFilter.Builder()
+                .setServiceUuid(new ParcelUuid(SERVICE_UUID))
+                .build();
+        filters.add(scanFilter);
         ScanSettings settings = new ScanSettings.Builder()
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
                 .build();
-        scanResults = new HashMap<String, BluetoothDevice>();
+        scanResults = new HashMap<>();
         scanCallback = new BtleScanCallback(scanResults);
         bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
-        bluetoothLeScanner.startScan(filters, settings, scanCallback);
-        scanning = true;
-
         // Stop scan after 10 seconds
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 stopScan();
-                Log.d("BLE_SERVER", "FOUND " + scanResults.size() + " Devices");
+                Log.d(TAG, "FOUND " + scanResults.size() + " Devices");
             }
         }, 10000);
+        scanning = true;
+        bluetoothLeScanner.startScan(filters, settings, scanCallback);
     }
 
     private void stopScan() {
@@ -96,8 +107,11 @@ public class BleClient {
             return;
         }
         for (String deviceAddress : scanResults.keySet()) {
-            Log.d(TAG, "Found device: " + deviceAddress + " with name: " + scanResults.get(deviceAddress).getName());
+            Log.d(TAG, "Found device: " + deviceAddress + " with UUID: " + scanResults.get(deviceAddress).getUuids());
         }
+
+
+
     }
 
     private boolean hasPermissions() {
@@ -133,6 +147,8 @@ public class BleClient {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             addScanResult(result);
+            GattClientCallback gattClientCallback = new GattClientCallback();
+            mGatt = result.getDevice().connectGatt(context, false, gattClientCallback);
         }
 
         @Override
@@ -152,5 +168,41 @@ public class BleClient {
             String deviceAddress = device.getAddress();
             scanResults.put(deviceAddress, device);
         }
-    };
+
+    }
+
+    public void disconnectGattServer() {
+        Log.d(TAG, "Closing Gatt connection");
+        if (mGatt != null) {
+            mGatt.disconnect();
+            mGatt.close();
+        }
+    }
+
+    private class GattClientCallback extends BluetoothGattCallback {
+        @Override
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            super.onConnectionStateChange(gatt, status, newState);
+            Log.d(TAG, "onConnectionStateChange newState: " + newState);
+
+            if (status == BluetoothGatt.GATT_FAILURE) {
+                Log.e(TAG, "Connection Gatt failure status " + status);
+                disconnectGattServer();
+                return;
+            } else if (status != BluetoothGatt.GATT_SUCCESS) {
+                // handle anything not SUCCESS as failure
+                Log.e(TAG, "Connection not GATT sucess status " + status);
+                disconnectGattServer();
+                return;
+            }
+
+            if (newState == BluetoothProfile.STATE_CONNECTED) {
+                Log.d(TAG, "Connected to device " + gatt.getDevice().getAddress());
+                gatt.discoverServices();
+            } else if (newState == BluetoothProfile.STATE_DISCONNECTED) {
+                Log.d(TAG, "Disconnected from device");
+                disconnectGattServer();
+            }
+        }
+    }
 }
