@@ -66,6 +66,7 @@ public class HoldLecture extends AppCompatActivity {
         studentLayout.addView(newStudent);
     }
 
+
     protected void startBluetoothClient(){
         Log.d("BleClient", "ABOUT TO START THREAD");
         final BleClient bleClient = new BleClient(getApplicationContext(), this, courseId);
