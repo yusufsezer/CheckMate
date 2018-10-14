@@ -18,8 +18,12 @@ import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.os.ParcelUuid;
 import android.util.Log;
 import static com.example.yusuf.beaconcheck.Constants.CHARACTERISTIC_ECHO_UUID;
+import static com.example.yusuf.beaconcheck.Constants.SERVICE_UUID;
 
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,7 +33,6 @@ import static android.content.Context.BLUETOOTH_SERVICE;
 public class BleServer {
 
     private static final String TAG = "BleServer";
-    private static final UUID SERVICE_UUID = UUID.fromString("7-6-5-4-3");
     private Handler mHandler;
     private List<BluetoothDevice> mDevices;
     private Context context;
@@ -37,6 +40,7 @@ public class BleServer {
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
+    private String classString;
 
     public BleServer(Context context){
         this.context = context;
@@ -178,14 +182,21 @@ public class BleServer {
                     value);
             if (characteristic.getUuid().equals(CHARACTERISTIC_ECHO_UUID)) {
                 mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, 0, null);
-                int length = value.length;
-                byte[] reversed = new byte[length];
-                for (int i = 0; i < length; i++) {
-                    reversed[i] = value[length - (i + 1)];
+                characteristic.setValue(value);
+                String classCode = "";
+                try {
+                    classCode = new String(value, "UTF-8").substring(0, 5);
+                } catch (UnsupportedEncodingException e) {
+                    Log.d(TAG, "Can't decode message. Closing connection with: " + device.getAddress());
+                    mGattServer.cancelConnection(device);
                 }
-                characteristic.setValue(reversed);
-                for (BluetoothDevice d : mDevices) {
-                    mGattServer.notifyCharacteristicChanged(d, characteristic, false);
+                // If the user is a member of this class, respond with netId
+                if (classCode.equals(classString)) {
+                    Log.d(TAG, "Sending back: " + Arrays.toString(value));
+                    mGattServer.notifyCharacteristicChanged(device, characteristic, false);
+                } else {
+                    Log.d(TAG, "User does not belong to this class. Closing connection with: " + device.getAddress());
+                    mGattServer.cancelConnection(device);
                 }
             }
         }
