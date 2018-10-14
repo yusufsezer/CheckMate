@@ -37,13 +37,15 @@ public class BleServer {
     private BluetoothManager mBluetoothManager;
     private BluetoothAdapter mBluetoothAdapter;
     private BluetoothLeAdvertiser mBluetoothLeAdvertiser;
+    private String[] courseIdList;
 
-    public BleServer(Context context){
+    public BleServer(Context context, String[] courseIdList){
         this.context = context;
         mHandler = new Handler();
         mDevices = new ArrayList<>();
         mBluetoothManager = (BluetoothManager) context.getSystemService(BLUETOOTH_SERVICE);
         mBluetoothAdapter = mBluetoothManager.getAdapter();
+        this.courseIdList = courseIdList;
 
     }
 

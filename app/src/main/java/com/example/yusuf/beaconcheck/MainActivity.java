@@ -18,6 +18,9 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
 
     Thread thread;
+    Course[] courseList;
+    String[] courseIdList;
+    String[] friendList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +32,13 @@ public class MainActivity extends AppCompatActivity {
         TextView emailView = findViewById(R.id.emailDisplay);
         emailView.setText(getEmail());
         Button joinButton = findViewById(R.id.joinClassButton);
-        Course[] courseList = getCourseList();
-        String[] friendList = getFriendData();
+        courseList = getCourseList();
+        courseIdList = new String[courseList.length];
+        for(int i = 0; i < courseList.length; i++){
+            courseIdList[i] = courseList[i].getId();
+        }
+
+        friendList = getFriendData();
         if(courseList.length == 0){
             TextView noCourses = new TextView(this);
             noCourses.setText("No courses yet!");
@@ -116,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         final BleServer bleServer = new BleServer(getApplicationContext());
         thread = new Thread(new Runnable() {
             public void run() {
-                bleServer.run();
+                bleServer.run(courseIdList);
             }
         });
         thread.start();
