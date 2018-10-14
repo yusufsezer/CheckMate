@@ -1,5 +1,8 @@
 package com.example.yusuf.beaconcheck;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -16,6 +19,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.bluetooth.le.BluetoothLeAdvertiser;
 import android.os.ParcelUuid;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import static com.example.yusuf.beaconcheck.Constants.CHARACTERISTIC_ECHO_UUID;
 import static com.example.yusuf.beaconcheck.Constants.SERVICE_UUID;
@@ -196,20 +200,48 @@ public class BleServer {
                 }
                 String courseId = "";
                 try {
-                    courseId = new String(value, "UTF-8").substring(0, 5);
+                    courseId = new String(value, "UTF-8");
                 } catch (UnsupportedEncodingException e) {
                     Log.d(TAG, "Can't decode message. Closing connection with: " + device.getAddress());
                     mGattServer.cancelConnection(device);
                 }
-                // If the user is a member of this class, respond with netId
-                if (Arrays.asList(courseIdList).contains(courseId)) {
+                // If the user is a member of this class, respond with netId and parse attendance for names
+                if (Arrays.asList(courseIdList).contains(courseId.substring(0, 5))) {
+                    stopAdvertising();
                     Log.d(TAG, "Sending back: " + Arrays.toString(value));
+                    pushFriendNotification(courseId);
                     mGattServer.notifyCharacteristicChanged(device, characteristic, false);
+                    mGattServer.cancelConnection(device);
                 } else {
                     Log.d(TAG, "User does not belong to this class. Closing connection with: " + device.getAddress());
                     mGattServer.cancelConnection(device);
                 }
             }
         }
+    }
+
+    public void pushFriendNotification(String message) {
+        Log.d(TAG, message);
+        String[] names = message.substring(6).split("-");
+
+        String content = "";
+        if (names.length > 0) {
+            Log.d(TAG, "Friends found");
+            content += "Say hi to your friends: ";
+            for(String name: names) {
+                content += name + ", ";
+            }
+            content = content.substring(0, content.length()-2);
+            Log.d(TAG, content);
+        }
+        NotificationChannel channel = new NotificationChannel("id", "asdf", 5);
+        Notification mBuilder = new NotificationCompat.Builder(context, channel.getId())
+                .setSmallIcon(R.drawable.bell)
+                .setContentTitle("You've Checked into Class!")
+                .setContentText(content)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT).build();
+        NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
+        notificationManager.notify("BeaconCheck", 1, mBuilder);
     }
 }
