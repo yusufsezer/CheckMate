@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 friendsLayout.addView(friendView);
             }
         }
-        startBluetoothServer();
+        //startBluetoothServer();
     }
 
     public Course[] getCourseList(){

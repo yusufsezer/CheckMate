@@ -41,10 +41,16 @@ public class BLEGattClient {
     }
 
     public AdvertiseSettings buildAdvertiseSettings() {
-        AdvertiseSettings.Builder settingsBuilder = new AdvertiseSettings.Builder();
-        settingsBuilder.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER);
-        settingsBuilder.setTimeout(0);
-        return settingsBuilder.build();
+        return new AdvertiseSettings.Builder()
+                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
+                .setConnectable(true)
+                .setTimeout(0)
+                .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_LOW)
+                .build();
+//        AdvertiseSettings.Builder settingsBuilder = new AdvertiseSettings.Builder();
+//        settingsBuilder.setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_LOW_POWER);
+//        settingsBuilder.setTimeout(0);
+//        return settingsBuilder.build();
     }
 
     private AdvertiseData buildAdvertiseData(String courseId) {
@@ -60,7 +66,7 @@ public class BLEGattClient {
 
         AdvertiseData.Builder dataBuilder = new AdvertiseData.Builder();
         dataBuilder.addServiceUuid(new ParcelUuid(UUID.randomUUID()));
-        dataBuilder.setIncludeDeviceName(true);
+        dataBuilder.setIncludeDeviceName(false);
 
         /* For example - this will cause advertising to fail (exceeds size limit) */
         //String failureData = "asdghkajsghalkxcjhfa;sghtalksjcfhalskfjhasldkjfhdskf";
@@ -72,7 +78,7 @@ public class BLEGattClient {
 
         @Override
         public void onStartFailure(int errorCode) {
-            Log.d("BLE_Advertising", "Advertising failed to start");
+            Log.d("BLE_Advertising", "Advertising failed to start" + errorCode);
 
             super.onStartFailure(errorCode);
             sendFailureIntent(errorCode);
