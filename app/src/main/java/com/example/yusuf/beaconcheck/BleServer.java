@@ -220,6 +220,19 @@ public class BleServer {
         }
     }
 
+    public String makeString(String[] names){
+        if(names.length == 1){
+            return names[0] + " is already checked in.";
+        }
+        else if (names.length == 2){
+            return names[0] + " and " + names[1] + " are already here.";
+        }
+        else{
+            return names[0] + " and +" + Integer.toString(names.length-1) + " other friends are here.";
+        }
+    }
+
+
     public void pushFriendNotification(String message) {
         Log.d(TAG, message);
         String[] names = message.substring(6).split("-");
@@ -238,7 +251,7 @@ public class BleServer {
         Notification mBuilder = new NotificationCompat.Builder(context, channel.getId())
                 .setSmallIcon(R.drawable.bell)
                 .setContentTitle("You've Checked into Class!")
-                .setContentText(content)
+                .setContentText(makeString(names))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT).build();
         NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(channel);
