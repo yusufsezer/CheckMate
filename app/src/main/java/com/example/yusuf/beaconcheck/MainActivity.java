@@ -62,9 +62,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         if (getApplicationContext().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            Log.d("BLE_SERVER", "LOCATION PERMISSION GRANTED");
+            Log.d("BleServer", "LOCATION PERMISSION GRANTED");
         } else {
-            Log.d("BLE_SERVER", "LOCATION PERMISSION DENIED...REQUESTING PERMISSION");
+            Log.d("BleServer", "LOCATION PERMISSION DENIED...REQUESTING PERMISSION");
             this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
         }
 
@@ -110,8 +110,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     protected void startBluetoothServer(){
-        Log.d("BLESERVER", "ABOUT TO START THREAD");
-        final BLEGattServer bleServer = new BLEGattServer(getApplicationContext(), this);
+        Log.d("BleServer", "ABOUT TO START THREAD");
+        final BleServer bleServer = new BleServer(getApplicationContext());
         Thread thread = new Thread(new Runnable() {
             public void run() {
                 bleServer.run();

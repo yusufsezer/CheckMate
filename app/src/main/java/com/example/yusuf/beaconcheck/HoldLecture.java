@@ -61,11 +61,11 @@ public class HoldLecture extends AppCompatActivity {
     }
 
     protected void startBluetoothClient(){
-        Log.d("BLE_Advertising", "ABOUT TO START THREAD");
-        final BLEGattClient bleClient = new BLEGattClient(getApplicationContext());
+        Log.d("BleClient", "ABOUT TO START THREAD");
+        final BleClient bleClient = new BleClient(getApplicationContext(), this);
         Thread thread = new Thread(new Runnable() {
             public void run() {
-                bleClient.run(courseId);
+                bleClient.run();
             }
         });
         thread.start();
